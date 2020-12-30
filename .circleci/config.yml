@@ -22,7 +22,7 @@ jobs:
       - checkout
       - run: |
           aws cloudformation deploy \
-            --template-file instances/cloudformation.yml \
+            --template-file instances/cloudfront.yml \
             --stack-name cloudfront \
             --parameter-overrides PipelineID=cicdpromotepromotionbucket
 
