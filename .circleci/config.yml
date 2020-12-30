@@ -9,7 +9,7 @@ jobs:
           aws cloudformation deploy \
             --template-file instances/bucket.yml \
             --stack-name cicdpromotepromotionbucket \
-            --parameter-overrides NAME="promotepromotionbucket"
+            --parameter-overrides S3NAME="promotepromotionbucket"
       - run: mkdir webcontent
       - run: aws s3 sync s3://udacitycicdwebcontent webcontent
       - run: sed -i 's/development/production/g' webcontent/index.html
