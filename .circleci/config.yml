@@ -1,0 +1,33 @@
+version: 2.1
+jobs:
+  create_and_deploy_front_end:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: |
+          aws cloudformation deploy \
+            --template-file instances/bucket.yml \
+            --stack-name "${CIRCLE_WORKFLOW_ID}" \
+            --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID}"
+      - run: mkdir webcontent && aws s3 sync s3://udacitycicdwebcontent webcontent
+      - run: sed -i 's/development/production/g' webcontent/index.html
+      - run: aws s3 sync ./webcontent s3://"${CIRCLE_WORKFLOW_ID}" --delete
+
+  promote_to_production:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: |
+          aws cloudformation deploy \
+            --template-file instances/cloudformation.yml \
+            --stack-name cloudfront \
+            --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+
+  workflows:
+    default:
+      jobs:
+        - create_and_deploy_front_end
+        - promote_to_production
+            requires: [create_and_deploy_front_end]
