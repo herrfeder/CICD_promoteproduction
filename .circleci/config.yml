@@ -24,7 +24,7 @@ jobs:
           aws cloudformation deploy \
             --template-file instances/cloudfront.yml \
             --stack-name cloudfront \
-            --parameter-overrides PipelineID=cicdpromotepromotionbucket
+            --parameter-overrides PipelineID=promotepromotionbucket
 
 workflows:
   default:
