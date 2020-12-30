@@ -1,8 +1,6 @@
 version: 2.1
 jobs:
   create_and_deploy_front_end:
-    context:
-      - aws_vars
     docker:
       - image: amazon/aws-cli
     steps:
@@ -18,8 +16,6 @@ jobs:
       - run: aws s3 sync ./webcontent s3://"${CIRCLE_WORKFLOW_ID}" --delete
 
   promote_to_production:
-    context:
-      - aws_vars
     docker:
       - image: amazon/aws-cli
     steps:
@@ -33,7 +29,11 @@ jobs:
 workflows:
   default:
     jobs:
-      - create_and_deploy_front_end
+      - create_and_deploy_front_end:
+          context:
+            - aws_vars
       - promote_to_production:
+          context:
+            - aws_vars
           requires:
             - create_and_deploy_front_end
